@@ -16,7 +16,7 @@ listOfFiles = []
 rowsCompiler = []
 filters= ['Email','First Name', 'Last Name', 'Department', 'Content', 'Status']
 tabsToCreate = ['Content','Status']
-tabName = 'Status'
+tabName = 'General'
 
 #Print warnings
 print('Press CTRL+C to exit\n\n')
@@ -43,6 +43,7 @@ df_report.drop('Last Name', inplace=True, axis=1)
 
 df_report = df_report.reindex(columns=['Status', 'Full Name', 'Department', 'Content', 'Email'])
 
+df2 = df_report
 #Export to XLSX
 resultSaveAs = 'resultado_reporte.xlsx'
 writer = pd.ExcelWriter((resultSaveAs), engine='xlsxwriter')
@@ -50,9 +51,15 @@ writer = pd.ExcelWriter((resultSaveAs), engine='xlsxwriter')
 
 df_report.set_index(['Department', 'Full Name','Email','Content'], inplace=True)
 
-df_report.reset_index()
-print(df_report.head())
-
 df_report.to_excel(writer, tabName)
+
+criterias = ['Passed', 'In Progress', 'Not Started']
+for criteria in criterias:
+    
+    filters = df2['Status'] == criteria
+    df_filtered = df2.loc[filters]
+    df_filtered.to_excel(writer, criteria)
+    print(df_filtered.head())
+
 
 writer.save()
